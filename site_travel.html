@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Travel Planner</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+        input, select, button { width: 100%; padding: 10px; margin-bottom: 15px; }
+        #result { margin-top: 20px; white-space: pre-wrap; background: #f4f4f4; padding: 15px; border-radius: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+    <h2>🌍 AI Travel Planner</h2>
+    
+    <form id="travelForm">
+        <label>Destination:</label>
+        <input type="text" id="destination" required placeholder="e.g., Tokyo">
+        
+        <label>Days:</label>
+        <input type="number" id="days" required placeholder="e.g., 5">
+        
+        <label>Budget:</label>
+        <select id="budget">
+            <option>Budget</option>
+            <option>Moderate</option>
+            <option>Luxury</option>
+        </select>
+        
+        <label>Interests:</label>
+        <input type="text" id="interests" required placeholder="e.g., food, hiking">
+        
+        <button type="submit">Plan My Trip</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("travelForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            
+            const resultDiv = document.getElementById("result");
+            resultDiv.style.display = "block";
+            resultDiv.innerText = "⏳ Planning your trip... Please wait.";
+
+            const requestData = {
+                destination: document.getElementById("destination").value,
+                days: document.getElementById("days").value,
+                budget: document.getElementById("budget").value,
+                interests: document.getElementById("interests").value
+            };
+
+            try {
+                const response = await fetch("/api/plan", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.itinerary) {
+                    resultDiv.innerText = data.itinerary;
+                } else {
+                    resultDiv.innerText = "Error: " + data.error;
+                }
+            } catch (error) {
+                resultDiv.innerText = "Connection error. Make sure Python is running!";
+            }
+        });
+    </script>
+
+    <style>
+    body { 
+        font-family: 'Segoe UI', system-ui, sans-serif; 
+        background-color: #f3f4f6; 
+        color: #1f2937;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+        margin: 0;
+    }
+
+    form, #result { 
+        background: #ffffff; 
+        width: 100%; 
+        max-width: 500px; 
+        padding: 30px; 
+        border-radius: 16px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,.08); 
+        box-sizing: border-box;
+        margin-bottom: 20px;
+    }
+
+    h2 { 
+        text-align: center; 
+        margin-top: 0; 
+        margin-bottom: 25px;
+    }
+
+    label { 
+        display: block; 
+        font-weight: 600; 
+        font-size: 14px; 
+        margin-bottom: 6px; 
+        color: #4b5563; 
+    }
+
+    input, select { 
+        width: 100%; 
+        padding: 12px; 
+        margin-bottom: 20px; 
+        border: 1px solid #d1d5db; 
+        border-radius: 8px; 
+        box-sizing: border-box;
+        font-size: 15px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus { 
+        outline: none; 
+        border-color: #2563eb; 
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.2); 
+    }
+    button { 
+        width: 100%; 
+        padding: 14px; 
+        background-color: #2563eb; 
+        color: white; 
+        border: none; 
+        border-radius: 8px; 
+        font-size: 16px; 
+        font-weight: 600; 
+        cursor: pointer; 
+        transition: background-color 0.2s;
+    }
+
+    button:hover { 
+        background-color: #1d4ed8; 
+    }
+    #result { 
+        display: none; 
+        line-height: 1.6; 
+        border-top: 5px solid #2563eb; 
+    }
+</style>
+</body>
+</html>
